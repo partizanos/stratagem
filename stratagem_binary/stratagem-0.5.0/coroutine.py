@@ -3,22 +3,17 @@ buffer=[]
 countAdd=0;
 countDel=0;
 
-async def readInput(countAdd):
+async def writeInput(countAdd):
 	while True:
 		print(buffer)
-
 		countAdd+=1
 		buffer.append(1)
 		print("PUT" + str(countAdd))
 		await asyncio.sleep(1)
 
-
-def syncreadInput():
+def syncwriteInput():
 	print("PUT" + str(countAdd))
 	buffer.append(1)
-
-
-
 
 async def deleteInput(countDel):
 	while True:
@@ -33,14 +28,14 @@ async def printInput():
 	counter =0 
 	print(buffer)
 	counter+=1
-	await readInput(counter)
+	await writeInput(counter)
 	print(buffer)
 	await deleteInput(counter)
-	# syncreadInput(counter)
+	# syncwriteInput(counter)
 
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete((asyncio.gather(
-    readInput(0),
+    writeInput(0),
     deleteInput(0)
 )))

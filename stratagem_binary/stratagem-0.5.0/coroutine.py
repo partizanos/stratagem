@@ -19,6 +19,7 @@ def syncreadInput():
 
 
 
+
 async def deleteInput(countDel):
 	while True:
 		print(buffer)

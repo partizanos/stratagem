@@ -9,7 +9,6 @@ async def writeInput(countAdd):
 		countAdd+=1
 		buffer.append(1)
 		print(buffer)		
-		
 		await asyncio.sleep(1)
 		print("PUT after sleep " + str(countAdd))
 
@@ -22,7 +21,6 @@ async def deleteInput(countDel):
 		# if two statements are reversed this breaks
 		await asyncio.sleep(1)
 		print("DEL after sleep " + str(countDel))		
-		
 		buffer.pop()
 		print(buffer)		
 		

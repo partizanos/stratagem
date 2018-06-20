@@ -1,0 +1,19 @@
+{
+	places: [
+		{name: "p1", jeton: 1},
+		{name: "p2", jeton: 1},
+		{name: "p3", jeton: 1}
+	],
+	transitions: [
+		{
+			name: "t1",
+			pre: [
+				{name: "p1", jeton: 1},
+				{name: "p2", jeton: 1}
+			],
+			after: [
+				{name: "p3", jeton: 1}
+			]
+		}
+	]
+}

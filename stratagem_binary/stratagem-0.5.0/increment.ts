@@ -1,10 +1,8 @@
 TransitionSystem
 ADT myAdt
-
 Signature
-
 Sorts
-pp, state, nat, name
+pp, nat, name
 
 Generators
 place1: name
@@ -18,10 +16,8 @@ zero: nat
 Variables 
 x : nat
 y : nat
-n : name
-n1 : name
 p : pp
-s : state
+
 initialState =  Place(place1, suc(zero), Place(place2, zero, noPlace))
 
 Strategies
@@ -33,4 +29,5 @@ t1 = { Place(place1, suc($x), Place(place2, $y, $p)) -> Place(place1, $x, Place(
 t2 = { Place(place2, suc($x), Place(place1, $y, $p)) -> Place(place2, $x, Place(place1, suc($y), $p)) }
 
 Transitions
-makeTransition = DoForAllPlaces(t1())
+makeTransition1 = DoForAllPlaces(t1())
+makeTransition2 = DoForAllPlaces(t2())

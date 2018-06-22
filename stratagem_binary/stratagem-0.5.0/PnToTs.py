@@ -12,11 +12,12 @@ def getPlacesNames(data):
 
 
 def getPetriNetData():
-    with open('petri3.json') as f:
+    with open('petriInput.json') as f:
         return json.load(f)
 
 
 def getJetonNumber(n, jetonString=""):
+    """3 => "suc(suc(suc(0)))" """
     if n == 0:
         return "zero"
     else:
@@ -25,7 +26,8 @@ def getJetonNumber(n, jetonString=""):
             return "".join([
                 "suc(",
                 getJetonNumber(n, jetonString),
-                ")"])
+                ")"
+            ])
 
 
 def init(program):
@@ -66,21 +68,13 @@ def setInitialState(places):
     ])
 
 
-def setVariables(program, placesNames, places):
-
-    variablesGenerators = reduce(
-        (lambda x, y:  x + "jeton_" + y + "\n"),
-        placesNames
-    )
-
+def setVariables(program, variablesGenerators, places):
     return "\n".join([
         program,
         "Variables",
         variablesGenerators,
         "p : pp",
-        setInitialState(places),
-        "suc: nat -> nat",
-        "zero: nat"
+        setInitialState(places)
     ])
 
 
@@ -101,24 +95,90 @@ def setGenerators(program, placesNames):
     ])
 
 
+def getPlaceVariable(placeName): return "jeton_" + placeName
+
+
+def setTransitionPlace(place, nextPlace="$p"):
+    """ {"name": "p1", "jeton": 1} => "Place(place2, $y, $p)" """
+    return "".join([
+        "Place(",
+        place["name"],
+        ", ",
+        getJetonNumber(place["jeton"]),
+        ", ",
+        nextPlace,
+        ")"
+    ])
+
+
+def setTransitionPart(restPlaces):
+    """
+    [{"name": "p1", "jeton": 1 }, {"name": "p2", "jeton": 0}]
+    => Place(place1, suc($x), Place(place2, $y, $p))
+    """
+
+    if(len(restPlaces) == 1):
+        return setTransitionPlace(restPlaces[0])
+    else:
+        current = restPlaces.pop(0)
+        return setTransitionPlace(
+            current,
+            setTransitionPart(restPlaces)
+        )
+
+
+def setTransitionStrategy(transition):
+    return "".join([
+        transition["name"],
+        " = { ",
+        setTransitionPart(transition["pre"][:]),
+        " -> ",
+        setTransitionPart(transition["after"][:]),
+        " }"
+    ])
+
+
+def setStrategies(program, transitions, places):
+    transitionStrategies = "\n".join(
+        [setTransitionStrategy(t) for t in transitions])
+
+    return "\n".join([
+        program,
+        "\n",
+        "Strategies",
+        "Try(S) = Choice(S, Identity)",
+        "".join([
+            "DoForAllPlaces(V) = Union(Try(V), Choice(One(DoForAllPlaces(V),",
+            str(len(places)),
+            "), Try(V)))"
+        ]),
+        transitionStrategies
+    ])
+
+
+def setTransitions(program, transitions):
+    return program + "\n\nTransitions\n" + "\n".join([
+        "makeTransition" + t["name"] + " = DoForAllPlaces(" + t["name"] + "())" for t in transitions
+    ])
+
+
+def save(program):
+    text_file = open("generated.ts", "w")
+    text_file.write(program)
+    text_file.close()
+
+
 data = getPetriNetData()
 placesNames = getPlacesNames(data)
-places = getPlaces(data)
+variables = [("jeton_" + p) for p in placesNames]
+variablesGenerators = "".join([var + ": nat\n" for var in variables])
+places = data["places"][:]
+transitions = data["transitions"]
 
 program = ""
 program = init(program)
 program = setGenerators(program, placesNames)
-program = setVariables(program, placesNames, places)
-print(program)
-
-
-# Strategies
-# Try(S) = Choice(S, Identity)
-# DoForAllPlaces(V) = Union(Try(V), Choice(One(DoForAllPlaces(V), 3), Try(V)))
-# DoForLastPlace(V) = Choice(One(DoForLastPlace(V), 3), V)
-
-# t1 = { Place(place1, suc($x), Place(place2, $y, $p)) -> Place(place1, $x, Place(place2, suc($y), $p)) }
-# t2 = { Place(place2, suc($x), Place(place1, $y, $p)) -> Place(place2, $x, Place(place1, suc($y), $p)) }
-
-# Transitions
-# makeTransition = DoForAllPlaces(t1())
+program = setVariables(program, variablesGenerators, places)
+program = setStrategies(program, transitions, data["places"])
+program = setTransitions(program, transitions)
+save(program)

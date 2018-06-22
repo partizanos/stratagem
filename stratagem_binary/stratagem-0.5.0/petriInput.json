@@ -5,8 +5,6 @@
 	],
 	"transitions": [
 		{
-			"from": ["t1"],
-			"to": ["t2"],
 			"name": "t1",
 			"pre": [
 				{"name": "p1", "jeton": 1},
@@ -15,6 +13,17 @@
 			"after": [
 				{"name": "p1", "jeton": 0},
 				{"name": "p2", "jeton": 1}
+			]
+		},
+		{
+			"name": "t2",
+			"pre": [
+				{"name": "p2", "jeton": 1},
+				{"name": "p1", "jeton": 0}
+			],
+			"after": [
+				{"name": "p2", "jeton": 0},
+				{"name": "p1", "jeton": 1}
 			]
 		}
 	]

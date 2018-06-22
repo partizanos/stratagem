@@ -1,7 +1,7 @@
 {
 	"places": [
 		{"name": "p1", "jeton": 1},
-		{"name": "p2", "jeton": 1},
+		{"name": "p2", "jeton": 2},
 		{"name": "p3", "jeton": 0}
 	],
 	"transitions": [

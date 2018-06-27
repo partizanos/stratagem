@@ -16,16 +16,16 @@ def getPetriNetData():
         return json.load(f)
 
 
-def getJetonNumber(n, jetonString=""):
+def getJetonNumber(n, variableValue="zero", jetonString=""):
     """3 => "suc(suc(suc(0)))" """
     if n == 0:
-        return "zero"
+        return variableValue
     else:
         while n + 1 > 0:
             n = n - 1
             return "".join([
                 "suc(",
-                getJetonNumber(n, jetonString),
+                getJetonNumber(n, variableValue, jetonString),
                 ")"
             ])
 
@@ -104,7 +104,7 @@ def setTransitionPlace(place, nextPlace="$p"):
         "Place(",
         place["name"],
         ", ",
-        getJetonNumber(place["jeton"]),
+        getJetonNumber(place["jeton"], "$" + getPlaceVariable(place["name"])),
         ", ",
         nextPlace,
         ")"

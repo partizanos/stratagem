@@ -26,8 +26,8 @@ initialState = Place(p1, suc(zero), Place(p2, zero, noPlace))
 Strategies
 Try(S) = Choice(S, Identity)
 DoForAllPlaces(V) = Union(Try(V), Choice(One(DoForAllPlaces(V),2), Try(V)))
-t1 = { Place(p1, suc(zero), Place(p2, zero, $p)) -> Place(p1, zero, Place(p2, suc(zero), $p)) }
-t2 = { Place(p2, suc(zero), Place(p1, zero, $p)) -> Place(p2, zero, Place(p1, suc(zero), $p)) }
+t1 = { Place(p1, suc($jeton_p1), Place(p2, $jeton_p2, $p)) -> Place(p1, $jeton_p1, Place(p2, suc($jeton_p2), $p)) }
+t2 = { Place(p2, suc($jeton_p2), Place(p1, $jeton_p1, $p)) -> Place(p2, $jeton_p2, Place(p1, suc($jeton_p1), $p)) }
 
 Transitions
 makeTransitiont1 = DoForAllPlaces(t1())
